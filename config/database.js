@@ -1,33 +1,16 @@
-import sqlite3 from 'sqlite3';
-import { open } from 'sqlite';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+import pg from 'pg';
+import dotenv from 'dotenv';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const dbPath = process.env.DATABASE_PATH || join(dirname(__dirname), 'dreams.db');
-
-let db = null;
-
-export async function getDatabase() {
-  if (!db) {
-    db = await open({
-      filename: dbPath,
-      driver: sqlite3.Database
-    });
-    
-    // Enable foreign keys
-    await db.exec('PRAGMA foreign_keys = ON');
-  }
-  return db;
+if (process.env.NODE_ENV === 'development') {
+  dotenv.config();
 }
+const { Pool } = pg;
 
-export async function closeDatabase() {
-  if (db) {
-    await db.close();
-    db = null;
-  }
-}
+const useSsl = process.env.NODE_ENV === 'production' || process.env.DATABASE_SSL === 'true';
 
-export default { getDatabase, closeDatabase };
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: useSsl ? { rejectUnauthorized: false } : false
+});
+
+export default pool;

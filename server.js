@@ -1,3 +1,5 @@
+import './config/env-config.js';
+
 import express from 'express';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
@@ -8,12 +10,11 @@ import dreamsRouter from './routes/dreams.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-
 const app = express();
 
-
-if (process.env.NODE_ENV === 'production'){
-  app.use(helmet());
+// Add security headers
+if (process.env.NODE_ENV === 'production') {
+  app.use(helmet()); 
 }
 
 const PORT = process.env.PORT || 3001;
