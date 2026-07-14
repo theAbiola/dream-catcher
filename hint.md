@@ -1,5 +1,5 @@
 cd to the folder and then:
-  innit
+  init
   add . 
   commit -m <commit message>
   remote add origin <url>
